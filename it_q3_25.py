@@ -67,12 +67,12 @@ df.columns = df.columns.str.strip()
 
 # Filtered df where 'Date of Activity:' is between January and March
 df['Date of Activity'] = pd.to_datetime(df['Date of Activity'], errors='coerce')
-df = df[(df['Date of Activity'].dt.month >= 1) & (df['Date of Activity'].dt.month <= 3)]
+# df = df[(df['Date of Activity'].dt.month >= 4) & (df['Date of Activity'].dt.month <= 6)]
 df['Month'] = df['Date of Activity'].dt.month_name()
 
-df_1 = df[df['Month'] == 'January']
-df_2 = df[df['Month'] == 'February']
-df_3 = df[df['Month'] == 'March']
+# df_1 = df[df['Month'] == 'January']
+# df_2 = df[df['Month'] == 'February']
+# df_3 = df[df['Month'] == 'March']
 
 # Define a discrete color sequence
 color_sequence = px.colors.qualitative.Plotly
@@ -112,7 +112,7 @@ it_columns =[
 
 df.rename(
     columns={
-        "Activity Duration (hours):": "Hours",
+        "Activity Duration (minutes):": "Hours",
         "Which form are you filling out?": "Form Type",
         "Person submitting this form:": "Person",
     }, 
@@ -131,14 +131,12 @@ def get_custom_quarter(date_obj):
         return "Q4"  # July–September
 
 # Reporting Quarter (use last month of the quarter)
-report_date = datetime(2025, 3, 1)  # Example report date for Q2 (Jan–Mar)
+report_date = datetime(2025, 6, 1) 
 month = report_date.month
+report_year = report_date.year
 
 current_quarter = get_custom_quarter(report_date)
-print(f"Reporting Quarter: {current_quarter}")
-
-# Extract year from report_date:
-report_year = report_date.year
+# print(f"Reporting Quarter: {current_quarter}")
 
 # ============================== IT Events ========================== #
 
@@ -157,8 +155,8 @@ df['Hours'] = (df['Hours']
     .astype(str)
     .str.strip()
     .replace({
-        '': 0,
-        })
+        '': '0',
+    })
     )   
 
 df['Hours'] = pd.to_numeric(df['Hours'], errors='coerce')
@@ -197,7 +195,7 @@ months_in_quarter = quarter_months[quarter]
 # Calculate total hours for each month in the current quarter
 hours = []
 for month in months_in_quarter:
-    hours_in_month = df[df['Month'] == month]['Hours'].sum()
+    hours_in_month = df[df['Month'] == month]['Hours'].sum()/60
     hours_in_month = round(hours_in_month)
     hours.append(hours_in_month)
     # print(f'IT hours in {month}:', hours_in_month, 'hours')
@@ -442,7 +440,7 @@ app.layout = html.Div(
               f'BMHC IT Report {current_quarter} {report_year}', 
               className='title'),
           html.H2( 
-              '01/01/2025 - 03/31/2025', 
+              '04/01/2025 - 06/30/2025', 
               className='title2'),
           html.Div(
               className='btn-box', 
